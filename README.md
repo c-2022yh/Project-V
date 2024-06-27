@@ -1,2 +1,2 @@
 # Project-V
-javascript canvas
+Web game frameworks using javascript canvas
