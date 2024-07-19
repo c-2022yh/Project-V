@@ -1,6 +1,6 @@
 //캔버스 사용을 위한 변수 설정
-const myCanvas = document.getElementById("myCanvas");
-const ctx = myCanvas.getContext("2d");
+const mainCanvas = document.getElementById("mainCanvas");
+const ctx = mainCanvas.getContext("2d");
 
 //델타타임 관련 프레임대비 게임 속도를 조절하는 변수
 var LTime = Date.now();
@@ -74,8 +74,8 @@ var mouseClickState = 0;
 var mouseMoveFunc = function(e)
 {
     //현재 마우스좌표를 갱신;
-    mouseX = e.clientX-myCanvas.offsetLeft;
-    mouseY = e.clientY-myCanvas.offsetLeft;
+    mouseX = e.clientX-mainCanvas.offsetLeft;
+    mouseY = e.clientY-mainCanvas.offsetLeft;
     
 }
 var mouseClickFunc = function(e)
@@ -111,9 +111,9 @@ var updateMouseClick = function(e)
 //자바스크립트 리스너 추가
 document.addEventListener("keydown",keyDownFunc,false);
 document.addEventListener("keyup",keyUpFunc,false);
-myCanvas.addEventListener("mousemove",mouseMoveFunc,false);
-myCanvas.addEventListener("mousedown",mouseClickFunc,false);
-myCanvas.addEventListener("mouseup",mouseUpFunc,false);
+mainCanvas.addEventListener("mousemove",mouseMoveFunc,false);
+mainCanvas.addEventListener("mousedown",mouseClickFunc,false);
+mainCanvas.addEventListener("mouseup",mouseUpFunc,false);
 
 
 //이미지파일을 미리 불러오는 함수
@@ -165,9 +165,9 @@ class GameImage
         let dx= this.image.width * this.anchor.x;
         let dy= this.image.height * this.anchor.y;
         ctx.resetTransform();
-        ctx.translate(this.pos.x+dx,this.pos.y+dy);
+        ctx.translate(this.pos.x,this.pos.y);
         ctx.rotate(this.rot);
-        ctx.transform(this.scale.x,0,0,this.scale.y,-dx * this.scale.x,-dy * this.scale.y);
+        ctx.transform(this.scale.x, 0, 0, this.scale.y, -dx * this.scale.x, -dy * this.scale.y);
     
         ctx.drawImage(this.image,0,0);
     }
@@ -223,7 +223,7 @@ var gameloop=function()
     update();
     //매 프레임마다 전체 캔버스를 지우고 다시 렌더링함
     ctx.resetTransform();
-    ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
+    ctx.clearRect(0,0,mainCanvas.width,mainCanvas.height);
     render();
 }
 

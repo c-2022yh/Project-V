@@ -235,10 +235,6 @@ class MainScene extends Scene
 
 
 
-
-
-
-
 //화살표 키로 스크롤 방지
 const ARROWKEYS = {
     'ArrowLeft':37,
