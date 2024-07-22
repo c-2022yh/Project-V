@@ -7,6 +7,7 @@ class Unit
         this.x=_x;
         this.y=_y;
         this.gImage;
+        this.collisionRadius;
     }
 
 }

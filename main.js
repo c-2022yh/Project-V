@@ -8,29 +8,40 @@ class MainScene extends Scene
         this.backgroundManager = new BackgroundManager();
         this.playerManager = new PlayerManager();
         this.enemyManager = new EnemyManager();
-        this.bulletManager = new BulletManager();
+        this.expObjectManager = new ExpObjectManager();
+
+        this.weaponManager = new WeaponManager();
+
+
+
+        this.projectileList = []; //투사체
 
         this.managerList = [];
         this.managerList.push(this.backgroundManager);
         this.managerList.push(this.playerManager);
         this.managerList.push(this.enemyManager);
-        this.managerList.push(this.bulletManager);
+        this.managerList.push(this.expObjectManager);
+        this.managerList.push(this.weaponManager);
 
 
     }
 
-    init() //처음 시작하는 함수
+    init() 
     {
         this.managerList.forEach(e => e.init());
+
+        this.setProjectileList();
     }
 
-    update() //업데이트 함수, 프레임마다 1번 실행
+    update() 
     {
         this.backgroundManager.update();
         this.playerManager.update();
-        this.enemyManager.update();
-        this.bulletManager.update(this.enemyManager.enemyList);
+        this.enemyManager.update(this.expObjectManager.expObjectList);
+        this.expObjectManager.update(this.playerManager.player);
+        this.weaponManager.update(this.enemyManager.enemyList);
 
+        
         this.move();
 
     }
@@ -40,9 +51,15 @@ class MainScene extends Scene
         this.managerList.forEach(e => e.render());
     }
 
-    
+    setProjectileList()
+    {
+        for(let i in this.weaponManager.weaponList)
+        {
+            this.projectileList.push(this.weaponManager.weaponList[i].projectileList);
+        }
+    }
 
-    move() 
+    move() //플레이어가 움직일 때, 화면과 같이 움직일 것들(플레이어에 귀속되지 않는 물체들)
     {
         let moveX=0;
         let moveY=0;
@@ -50,29 +67,48 @@ class MainScene extends Scene
 
         let backgroundList = this.backgroundManager.backgroundList;
         let enemyList = this.enemyManager.enemyList;
-        let bulletList = this.bulletManager.bulletList;
+        let expObjectList = this.expObjectManager.expObjectList;
 
 
-        if((keys["KeyW"] || keys["ArrowUp"]))
+        if(mouseClickState) //마우스 클릭 이동
         {
-            moveY = moveSpeed*deltaTime;
-        }
-        if((keys["KeyA"] || keys["ArrowLeft"]))
-        {
-            moveX = moveSpeed*deltaTime;
-            this.playerManager.player.gImage.scale.x = 1;
-        }
-        if((keys["KeyS"] || keys["ArrowDown"]))
-        {
-            moveY = -moveSpeed*deltaTime;
-        }
-        if((keys["KeyD"] || keys["ArrowRight"]))
-        {
-            moveX = -moveSpeed*deltaTime;
-            this.playerManager.player.gImage.scale.x = -1;
+            let x = mainCanvas.width/2 - mouseX;
+            let y = mainCanvas.height/2 - mouseY;
+    
+            let distance = Math.sqrt(x*x + y*y);
+    
+            moveX = (x/distance) * moveSpeed * deltaTime;
+            moveY = (y/distance) * moveSpeed * deltaTime;
+    
+            if(moveX > 0) this.playerManager.player.gImage.scale.x = 1;
+            else if(moveX < 0) this.playerManager.player.gImage.scale.x = -1;
 
         }
+        else //키보드 입력 이동
+        {
+            if((keys["KeyW"] || keys["ArrowUp"]))
+            {
+                moveY += moveSpeed*deltaTime;
+            }
+            else if((keys["KeyS"] || keys["ArrowDown"]))
+            {
+                moveY -= moveSpeed*deltaTime;
+            }
+            if((keys["KeyA"] || keys["ArrowLeft"]))
+            {
+                moveX += moveSpeed*deltaTime;
+                this.playerManager.player.gImage.scale.x = 1;
+            }
+            else if((keys["KeyD"] || keys["ArrowRight"]))
+            {
+                moveX -= moveSpeed*deltaTime;
+                this.playerManager.player.gImage.scale.x = -1;
+            }
+        }
+    
 
+
+        //이동
         for(let i in backgroundList)
         {
             backgroundList[i].gImage.pos.x += moveX;
@@ -83,10 +119,19 @@ class MainScene extends Scene
             enemyList[i].gImage.pos.x += moveX;
             enemyList[i].gImage.pos.y += moveY;
         }
-        for(let i in bulletList)
+        for(let i in expObjectList)
         {
-            bulletList[i].gImage.pos.x += moveX;
-            bulletList[i].gImage.pos.y += moveY;
+            expObjectList[i].gImage.pos.x += moveX;
+            expObjectList[i].gImage.pos.y += moveY;
+        }
+        for(let i in this.projectileList)
+        {
+            for(let j in this.projectileList[i])
+            {
+                this.projectileList[i][j].gImage.pos.x += moveX;
+                this.projectileList[i][j].gImage.pos.y += moveY;
+            }
+            
         }
     }
     

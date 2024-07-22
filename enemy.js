@@ -31,8 +31,8 @@ class Enemy extends Unit
 
     move()
     {
-        let x = mainCanvas.width/2 - this.gImage.pos.x - this.gImage.image.width/2;
-        let y = mainCanvas.height/2 - this.gImage.pos.y - this.gImage.image.height/2;
+        let x = mainCanvas.width/2 - this.gImage.pos.x;
+        let y = mainCanvas.height/2 - this.gImage.pos.y;
 
         let distance = Math.sqrt(x*x + y*y);
 
@@ -69,7 +69,7 @@ class EnemyManager
         };
     }
 
-    update()
+    update(expObjectList)
     {
         this.makeEnemyDelay--;
         if(this.makeEnemyDelay <= 0)
@@ -82,7 +82,7 @@ class EnemyManager
         this.enemyList.forEach(e => e.move());
 
         this.checkCollision();
-        this.deleteEnemy();
+        this.deleteEnemy(expObjectList);
     }
 
     render()
@@ -117,12 +117,23 @@ class EnemyManager
         this.enemyList.push(new Enemy(x,y));
     }
     
-    deleteEnemy()
+    deleteEnemy(expObjectList)
     {
         for(let i in this.enemyList)
         {
             if(this.enemyList[i].hp <= 0)
             {
+                let x = this.enemyList[i].gImage.pos.x;
+                let y = this.enemyList[i].gImage.pos.y;
+
+                let rank = 0;
+
+                let r = Math.random();
+                if(r > 0.95) rank = 2;
+                else if(r > 0.75) rank = 1;
+
+                expObjectList.push(new ExpObject(x, y, rank));
+
                 this.enemyList[i].dead();
                 this.enemyList.splice(i,1);
                 break;
