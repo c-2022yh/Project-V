@@ -36,8 +36,8 @@ class WeaponManager
     constructor()
     {
         this.weapon = { //보유 무기
-            wand : 0,
-            firewand : 0,
+            wand : 1,
+            firewand : 1,
             book : 1
 
         };
@@ -49,9 +49,9 @@ class WeaponManager
         this.weaponList.forEach(e => e.init());
     }
 
-    update(enemyList)
+    update()
     {
-        this.weaponList.forEach(e => e.update(enemyList));
+        this.weaponList.forEach(e => e.update(mainScene.enemyManager.enemyList));
     }
 
     render()

@@ -72,13 +72,13 @@ class ExpObjectManager
 
     }
 
-    update(player)
+    update()
     {
-        this.checkInMagneticRadius(player);
+        this.checkInMagneticRadius();
 
         this.expObjectList.forEach(e => e.grabbed());
 
-        this.deleteExpObject(player);
+        this.deleteExpObject();
 
     }
 
@@ -92,11 +92,11 @@ class ExpObjectManager
         this.expObjectList.push(new ExpObject(_x,_y,_r));
 
     }
-    deleteExpObject(player)
+    deleteExpObject()
     {
-        let playerX = player.gImage.pos.x;
-        let playerY = player.gImage.pos.y;
-        let playerCollisionRadius = player.collisionRadius;
+        let playerX = mainScene.playerManager.player.gImage.pos.x;
+        let playerY = mainScene.playerManager.player.gImage.pos.y;
+        let playerCollisionRadius = mainScene.playerManager.player.collisionRadius;
         for(let i in this.expObjectList)
         {
             let expX = this.expObjectList[i].gImage.pos.x;
@@ -109,18 +109,18 @@ class ExpObjectManager
             let distance = Math.sqrt(dx*dx + dy*dy);
             if(distance <= playerCollisionRadius + expRadius)
             {
-                player.getExp+=this.expObjectList[i].exp;
+                mainScene.playerManager.player.getExp+=this.expObjectList[i].exp;
                 this.expObjectList.splice(i,1);
                 break;
             }
         }
     }
 
-    checkInMagneticRadius(player)
+    checkInMagneticRadius()
     {
-        let playerX = player.gImage.pos.x;
-        let playerY = player.gImage.pos.y;
-        let playerRadius = player.magneticRadius;
+        let playerX = mainScene.playerManager.player.gImage.pos.x;
+        let playerY = mainScene.playerManager.player.gImage.pos.y;
+        let playerRadius = mainScene.playerManager.player.magneticRadius;
         for(let i in this.expObjectList)
         {
             let expX = this.expObjectList[i].gImage.pos.x;

@@ -34,15 +34,14 @@ class WeaponBook extends BasicWeapon
 
     makeObject()
     {
-        let num = 1;
+        let num = 3;
 
         for(let i=0;i<num;i++)
         {
             let angle = (i*2*Math.PI)/num;
             this.bulletList.push(new BookObject(mainCanvas.width/2, mainCanvas.height/2, angle));
         }
-        //let angle=360;
-        //for(let i=0;i<3;i++)
+
     }
 
     /*
@@ -80,26 +79,13 @@ class WeaponBook extends BasicWeapon
 
                 if(distance <= this.bulletList[i].collisionRadius + enemyList[j].collisionRadius)
                 {
-                    /*
-                    if(this.bulletList[i].hittedObject == null || this.bulletList[i].hittedObject != enemyList[j])
+                    if(!this.bulletList[i].hittedObject.has(enemyList[j].ID))
                     {
-                        enemyList[j].hp-=1; //체력 감소
-                        this.bulletList[i].hittedObject = enemyList[j];
+                        let randomDamage = Math.floor(Math.random()*7)+7;
+                        enemyList[j].hit(randomDamage, false);
+                        this.bulletList[i].hittedObject.add(enemyList[j].ID);
                         break;
                     }
-                    else
-                    {
-                        for(let k in this.bulletList[i].hittedObject)// 공전 주기마다 한번만 적중하도록 함 미완
-                        {
-                            if(this.bulletList[i].hittedObject[k] != enemyList[j])
-                            {
-                                //enemyList[j].hp-=1; //체력 감소
-                                //this.bulletList[i].hittedObject.push(enemyList[j]);
-                                break;
-                            }
-                        }
-                    }
-                    */
                     
                     
 
@@ -121,9 +107,9 @@ class BookObject extends Unit
         this.moveSpeed = 5; //공전 속도
         this.angle=_a;
 
-        this.orbitRadius = 120; // 얼마나 플레이어와 떨어져 있는 지
+        this.orbitRadius = 80; // 얼마나 플레이어와 떨어져 있는 지
 
-        this.hittedObject = null;
+        this.hittedObject = new Set();
 
 
         this.gImage=new GameImage("images/book_object.png");
@@ -142,8 +128,7 @@ class BookObject extends Unit
         if(this.angle <= -6) //한바퀴 돌았으면 몹 재적중 가능
         {
             this.angle+=6;
-            console.log(this.hittedObject);
-            this.hittedObject = null;
+            this.hittedObject.clear();
         }
     }
 }

@@ -1,17 +1,19 @@
 //적 클래스 구현
-
+var enemyID=0;
 class Enemy extends Unit
 {
     constructor(_x,_y) //생성자
     {
         super(_x, _y); //부모 생성자 호출
 
-        this.hp=1; //체력
-
+        this.hp=100; //체력
+        this.ID = enemyID++;
         this.moveSpeed = 50;
+        this.attackPoint = 1;
 
         this.dx=1;
         this.dy=1;
+
 
         this.gImage = undefined;
         let r = Math.floor(Math.random()*5);
@@ -47,6 +49,15 @@ class Enemy extends Unit
         this.gImage.pos.x += this.dx * deltaTime;
         this.gImage.pos.y += this.dy * deltaTime;
     }
+
+    hit(_d, isCritical) //피격 시 실행
+    {
+        this.hp-=_d;
+        let d = new DamageUnitLine(this.gImage.pos.x, this.gImage.pos.y, _d);
+        mainScene.damageUnitManager.damageUnitLineList.push(d);
+        //if(isCritical)
+    }
+
   
     dead() //죽을 때 실행되는 함수
     {
@@ -69,7 +80,7 @@ class EnemyManager
         };
     }
 
-    update(expObjectList)
+    update()
     {
         this.makeEnemyDelay--;
         if(this.makeEnemyDelay <= 0)
@@ -82,7 +93,7 @@ class EnemyManager
         this.enemyList.forEach(e => e.move());
 
         this.checkCollision();
-        this.deleteEnemy(expObjectList);
+        this.deleteEnemy();
     }
 
     render()
@@ -117,7 +128,7 @@ class EnemyManager
         this.enemyList.push(new Enemy(x,y));
     }
     
-    deleteEnemy(expObjectList)
+    deleteEnemy()
     {
         for(let i in this.enemyList)
         {
@@ -132,7 +143,7 @@ class EnemyManager
                 if(r > 0.95) rank = 2;
                 else if(r > 0.75) rank = 1;
 
-                expObjectList.push(new ExpObject(x, y, rank));
+                mainScene.expObjectManager.expObjectList.push(new ExpObject(x, y, rank));
 
                 this.enemyList[i].dead();
                 this.enemyList.splice(i,1);
@@ -156,12 +167,12 @@ class EnemyManager
                     let dy = this.enemyList[i].gImage.pos.y - this.enemyList[j].gImage.pos.y;
                     let distance = Math.sqrt(dx*dx + dy*dy);
 
-                    let s = this.enemyList[i].collisionRadius * 2; //수정해야함
-                    if(distance < s)
+                    let collisionDistance = this.enemyList[i].collisionRadius * 2; //수정해야함
+                    if(distance < collisionDistance)
                     {
                         let angle = Math.atan2(dy,dx);
-                        let moveX = Math.cos(angle) * (s - distance) / 2;
-                        let moveY = Math.sin(angle) * (s - distance) / 2;
+                        let moveX = Math.cos(angle) * (collisionDistance - distance) / 2;
+                        let moveY = Math.sin(angle) * (collisionDistance - distance) / 2;
                         this.enemyList[i].gImage.pos.x += moveX;
                         this.enemyList[i].gImage.pos.y += moveY;
                         this.enemyList[j].gImage.pos.x -= moveX;

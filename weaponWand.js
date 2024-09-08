@@ -93,7 +93,8 @@ class WeaponWand extends BasicWeapon
                 if(distance <= this.bulletList[i].collisionRadius + enemyList[j].collisionRadius)
                 {
                     this.bulletList.splice(i,1); //총알 삭제
-                    enemyList[j].hp-=1; //체력 감소
+                    let randomDamage = Math.floor(Math.random()*7)+20;
+                    enemyList[j].hit(randomDamage, false);
                     break;
                 }
 

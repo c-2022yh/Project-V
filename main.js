@@ -9,6 +9,7 @@ class MainScene extends Scene
         this.playerManager = new PlayerManager();
         this.enemyManager = new EnemyManager();
         this.expObjectManager = new ExpObjectManager();
+        this.damageUnitManager = new DamageUnitManager();
 
         this.weaponManager = new WeaponManager();
 
@@ -21,6 +22,8 @@ class MainScene extends Scene
         this.managerList.push(this.playerManager);
         this.managerList.push(this.enemyManager);
         this.managerList.push(this.expObjectManager);
+        this.managerList.push(this.damageUnitManager);
+
         this.managerList.push(this.weaponManager);
 
 
@@ -35,12 +38,7 @@ class MainScene extends Scene
 
     update() 
     {
-        this.backgroundManager.update();
-        this.playerManager.update();
-        this.enemyManager.update(this.expObjectManager.expObjectList);
-        this.expObjectManager.update(this.playerManager.player);
-        this.weaponManager.update(this.enemyManager.enemyList);
-
+        this.managerList.forEach(e => e.update());
         
         this.move();
 
@@ -68,6 +66,7 @@ class MainScene extends Scene
         let backgroundList = this.backgroundManager.backgroundList;
         let enemyList = this.enemyManager.enemyList;
         let expObjectList = this.expObjectManager.expObjectList;
+        let damageUnitLineList = this.damageUnitManager.damageUnitLineList;
 
 
         if(mouseClickState) //마우스 클릭 이동
@@ -123,6 +122,15 @@ class MainScene extends Scene
         {
             expObjectList[i].gImage.pos.x += moveX;
             expObjectList[i].gImage.pos.y += moveY;
+        }
+        for(let i in damageUnitLineList)
+        {
+            for(let j in damageUnitLineList[i].damageUnitList)
+            {
+                damageUnitLineList[i].damageUnitList[j].gImage.pos.x += moveX;
+                damageUnitLineList[i].damageUnitList[j].gImage.pos.y += moveY;
+            
+            }
         }
         for(let i in this.projectileList)
         {
